@@ -2,7 +2,6 @@ package com.company.toDoList.service;
 
 import com.company.toDoList.models.Todo;
 import com.company.toDoList.repository.TodoRepo;
-import com.company.toDoList.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +9,10 @@ import java.util.List;
 
 @Service
 public class TodoService  {
-    @Autowired
-    private TodoRepo todoRepo;
 
+    private final TodoRepo todoRepo;
+
+    @Autowired
     public TodoService(TodoRepo todoRepo) {
         this.todoRepo = todoRepo;
     }
@@ -21,11 +21,9 @@ public class TodoService  {
         return todoRepo.save(todo);
     }
 
-
     public Todo updateTodoList(Todo todo) {
-        return null;
+        return todoRepo.save(todo);
     }
-
 
     public List<Todo> findAll() {
         return todoRepo.findAll();
@@ -34,7 +32,6 @@ public class TodoService  {
     public Todo findById(Long id) {
         return todoRepo.getOne(id);
     }
-
 
     public void deleteTodoListById(Long id) {
         todoRepo.deleteById(id);

@@ -1,9 +1,10 @@
 package com.company.toDoList.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -11,16 +12,19 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(name = "firstname")
-    private String firstname;
+    public String firstname;
+
     @Column(name = "lastname")
-    private String lastname;
+    public String lastname;
 
-    @OneToMany
-    @JoinColumn
-    private List<Todo> todos;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    public Set<Todo> todos = new HashSet<>();
 
-
+    public void assignTodo(Todo todo) {
+        this.todos = (Set<Todo>) todo;
+    }
 }
