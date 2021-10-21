@@ -18,17 +18,17 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text = "${user.id}"></td>
-                <td th:text = "${user.firstName}"></td>
-                <td th:text = "${user.lastName}"></td>
-                <td><a th:href="@{user-update/{id}(id=${user.id})}">Edit</a></td>
-                <td><a th:href="@{user-delete/{id}(id=${user.id})}">Delete</a></td>
+            <tr th:each="userEntity : ${users}">
+                <td th:text = "${userEntity.id}"></td>
+                <td th:text = "${userEntity.firstName}"></td>
+                <td th:text = "${userEntity.lastName}"></td>
+                <td><a th:href="@{userEntity-update/{id}(id=${userEntity.id})}">Edit</a></td>
+                <td><a th:href="@{userEntity-delete/{id}(id=${userEntity.id})}">Delete</a></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <p><a href="/user-create">Create user</a></p>
+    <p><a href="/userEntity-create">Create userEntity</a></p>
 </div>
 
 </body>

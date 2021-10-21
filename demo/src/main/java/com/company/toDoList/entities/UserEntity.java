@@ -1,15 +1,16 @@
-package com.company.toDoList.models;
+package com.company.toDoList.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,12 +20,4 @@ public class User {
 
     @Column(name = "lastname")
     public String lastname;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    public Set<Todo> todos = new HashSet<>();
-
-    public void assignTodo(Todo todo) {
-        this.todos = (Set<Todo>) todo;
-    }
 }

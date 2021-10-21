@@ -1,7 +1,10 @@
 package com.company.toDoList.controllers;
 
-import com.company.toDoList.models.Todo;
-import com.company.toDoList.models.User;
+import com.company.toDoList.dto.TodoCreateDto;
+import com.company.toDoList.dto.TodoDto;
+import com.company.toDoList.dto.TodoUpdateDto;
+import com.company.toDoList.entities.TodoEntity;
+import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.service.TodoService;
 import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/todo")
+@RequestMapping("/users/{userId}/todos")
 public class TodoController {
 
     private final TodoService todoService;
@@ -24,41 +28,48 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> findAll() {
-        return todoService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Todo findById(Long id) {
-        Todo todo = todoService.findById(id);
-        if (todo == null){
-            throw new EntityNotFoundException("Not found");
+    public List<TodoDto> findByUserId(@PathVariable Long userId) {
+        UserEntity user = userService.findById(userId);
+        if(user == null){
+            throw new EntityNotFoundException("User not found");
         }
-        return todo;
+        List<TodoEntity> todos = todoService.findByUser(user);
+        return todos
+                .stream()
+                .map(it -> new TodoDto(it.getId(), it.getTask(), it.isDone()))
+                .collect(Collectors.toList());
     }
 
     @PostMapping
-    public Todo createTodo(@RequestBody Todo todo) {
-        return todoService.createTodoList(todo);
+    public TodoDto create(@PathVariable Long userId, @RequestBody TodoCreateDto todoCreateDto) {
+        UserEntity user = userService.findById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+        TodoEntity todoEntity = new TodoEntity();
+        todoEntity.setTask(todoCreateDto.getTask());
+        todoEntity.setDone(false);
+        todoEntity.setUser(user);
+        TodoEntity createdTodoEntity = todoService.create(todoEntity);
+        return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.isDone());
     }
 
     @PutMapping("/{id}")
-    public Todo updateTodoList(@PathVariable("id") Long id, @RequestBody Todo todo) {
-        Todo updatingTodo = todoService.findById(id);
+    public TodoDto update(@PathVariable("id") Long id, @PathVariable Long userId, @RequestBody TodoUpdateDto todoUpdateDto) {
+        TodoEntity todo = todoService.findById(id);
         if (todo == null) {
             throw new EntityNotFoundException("Todo list not found");
         }
-        updatingTodo.setTask(todo.getTask());
-        updatingTodo.setUser(todo.getUser());
-        return todoService.updateTodoList(updatingTodo);
-    }
+        UserEntity user = userService.findById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+        todo.setTask(todoUpdateDto.getTask());
+        todo.setDone(todoUpdateDto.isDone());
 
-    @PutMapping("/{id}/users/{id}")
-    public Todo userTodo(@PathVariable Long todoId, @PathVariable Long userId){
-        Todo todo = todoService.findById(todoId);
-        User user = userService.findById(userId);
-        todo.assignUser(user);
-        return todoService.updateTodoList(todo);
+        TodoEntity updatingTodo = todoService.update(todo);
+        
+        return new TodoDto(updatingTodo.getId(), updatingTodo.getTask(), updatingTodo.isDone());
     }
 
     @DeleteMapping("/{id}")

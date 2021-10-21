@@ -1,6 +1,5 @@
-package com.company.toDoList.models;
+package com.company.toDoList.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "todo")
 @Data
-public class Todo {
+public class TodoEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -21,9 +20,5 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    public User user;
-
-    public void assignUser(User user) {
-        this.user = user;
-    }
+    public UserEntity user;
 }

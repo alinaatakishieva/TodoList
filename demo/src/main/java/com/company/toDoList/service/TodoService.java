@@ -1,6 +1,7 @@
 package com.company.toDoList.service;
 
-import com.company.toDoList.models.Todo;
+import com.company.toDoList.entities.TodoEntity;
+import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.repository.TodoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,23 +18,27 @@ public class TodoService  {
         this.todoRepo = todoRepo;
     }
 
-    public Todo createTodoList(Todo todo) {
-        return todoRepo.save(todo);
+    public TodoEntity create(TodoEntity todoEntity) {
+        return todoRepo.save(todoEntity);
     }
 
-    public Todo updateTodoList(Todo todo) {
-        return todoRepo.save(todo);
+    public TodoEntity update(TodoEntity todoEntity) {
+        return todoRepo.save(todoEntity);
     }
 
-    public List<Todo> findAll() {
+    public List<TodoEntity> findAll() {
         return todoRepo.findAll();
     }
 
-    public Todo findById(Long id) {
+    public TodoEntity findById(Long id) {
         return todoRepo.getOne(id);
     }
 
     public void deleteTodoListById(Long id) {
         todoRepo.deleteById(id);
+    }
+
+    public List<TodoEntity> findByUser(UserEntity userEntity){
+        return todoRepo.findAllByUser(userEntity);
     }
 }

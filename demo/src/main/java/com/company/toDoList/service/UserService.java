@@ -1,6 +1,6 @@
 package com.company.toDoList.service;
 
-import com.company.toDoList.models.User;
+import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,23 +18,23 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public User findById(Long id) {
+    public UserEntity findById(Long id) {
         return userRepo.getOne(id);
     }
 
-    public List<User> findAll() {
+    public List<UserEntity> findAll() {
         return userRepo.findAll();
     }
 
-    public User createUser(User user) {
-        return userRepo.save(user);
+    public UserEntity createUser(UserEntity userEntity) {
+        return userRepo.save(userEntity);
     }
 
     public void deleteById(Long id) {
         userRepo.deleteById(id);
     }
 
-    public User update(User user) {
-        return userRepo.save(user);
+    public UserEntity update(UserEntity userEntity) {
+        return userRepo.save(userEntity);
     }
 }
