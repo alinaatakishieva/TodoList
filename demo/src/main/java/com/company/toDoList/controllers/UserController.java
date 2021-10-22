@@ -30,50 +30,22 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> findAll() {
-        return userService.findAll()
-                .stream()
-                .map(userEntity -> new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), convertToTodoDto(userEntity)))
-                .collect(Collectors.toList());
-    }
-
-    private List<TodoDto> convertToTodoDto(UserEntity userEntity) {
-        return todoService.findByUser(userEntity)
-                .stream()
-                .map(todoEntity -> new TodoDto(todoEntity.getId(), todoEntity.getTask(), todoEntity.isDone()))
-                .collect(Collectors.toList());
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public UserDto findById(@PathVariable Long id) {
-        UserEntity userEntity = userService.findById(id);
-        if (userEntity == null) {
-            throw new EntityNotFoundException("Not found");
-        }
-        return new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), convertToTodoDto(userEntity));
+    public UserDto findById(@PathVariable Long id){
+        return userService.findById(id);
     }
 
     @PostMapping
     public UserDto create(@RequestBody UserCreateDto userCreateDto) {
-        UserEntity user = new UserEntity();
-        user.setFirstname(userCreateDto.getFirstname());
-        user.setLastname(userCreateDto.getLastname());
-
-        UserEntity createdUser = userService.createUser(user);
-
-        return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), convertToTodoDto(user));
+        return userService.create(userCreateDto);
     }
 
     @PutMapping("/{id}")
     public UserDto update(@PathVariable("id") Long id, @RequestBody UserUpdateDto userUpdateDto) {
-        UserEntity user = userService.findById(id);
-        if (user == null) {
-            throw new EntityNotFoundException("Not found");
-        }
-        user.setFirstname(userUpdateDto.getFirstname());
-        user.setLastname(userUpdateDto.getLastname());
-        UserEntity updatingUser = userService.update(user);
-
-        return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), convertToTodoDto(user));
+        return userService.update(id, userUpdateDto);
     }
 
     @DeleteMapping("/{id}")

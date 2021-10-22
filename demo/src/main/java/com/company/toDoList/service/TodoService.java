@@ -26,9 +26,6 @@ public class TodoService  {
         return todoRepo.save(todoEntity);
     }
 
-    public List<TodoEntity> findAll() {
-        return todoRepo.findAll();
-    }
 
     public TodoEntity findById(Long id) {
         return todoRepo.getOne(id);
