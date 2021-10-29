@@ -1,15 +1,12 @@
 package com.company.toDoList.service;
 
-import com.company.toDoList.dto.TodoDto;
-import com.company.toDoList.dto.UserCreateDto;
-import com.company.toDoList.dto.UserDto;
-import com.company.toDoList.dto.UserUpdateDto;
+import com.company.toDoList.dto.*;
 import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.repository.TodoRepo;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 import javax.persistence.EntityNotFoundException;
@@ -39,7 +36,7 @@ public class UserService {
     private List<TodoDto> convertToTodoDto(UserEntity userEntity) {
         return todoRepo.findAllByUser(userEntity)
                 .stream()
-                .map(todoEntity -> new TodoDto(todoEntity.getId(), todoEntity.getTask(), todoEntity.isDone()))
+                .map(todoEntity -> new TodoDto(todoEntity.getId(), todoEntity.getTask(), todoEntity.getStatus()))
                 .collect(Collectors.toList());
     }
 
@@ -54,9 +51,10 @@ public class UserService {
         UserEntity user = new UserEntity();
         user.setFirstname(userCreateDto.getFirstname());
         user.setLastname(userCreateDto.getLastname());
+        user.setUsername(userCreateDto.getUsername());
+        user.setPassword(userCreateDto.getPassword());
 
         UserEntity createdUser = userRepo.save(user);
-
         return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), convertToTodoDto(user));
     }
 

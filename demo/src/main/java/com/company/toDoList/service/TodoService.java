@@ -5,17 +5,21 @@ import com.company.toDoList.dto.TodoDto;
 import com.company.toDoList.dto.TodoUpdateDto;
 import com.company.toDoList.entities.TodoEntity;
 import com.company.toDoList.entities.UserEntity;
+import com.company.toDoList.enums.TaskStatus;
 import com.company.toDoList.repository.TodoRepo;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TodoService  {
+public class TodoService {
 
     private final TodoRepo todoRepo;
     private final UserRepo userRepo;
@@ -33,10 +37,10 @@ public class TodoService  {
         }
         TodoEntity todo = new TodoEntity();
         todo.setTask(todoCreateDto.getTask());
-        todo.setDone(false);
         todo.setUser(user);
+        todo.setStatus(TaskStatus.CREATED);
         TodoEntity createdTodoEntity = todoRepo.save(todo);
-        return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.isDone());
+        return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.getStatus());
     }
 
     public TodoDto update(Long id, Long userId, TodoUpdateDto todoUpdateDto) {
@@ -49,30 +53,64 @@ public class TodoService  {
             throw new EntityNotFoundException("User not found");
         }
         todo.setTask(todoUpdateDto.getTask());
-        todo.setDone(todoUpdateDto.isDone());
+        todo.setStatus(todoUpdateDto.getStatus());
 
         TodoEntity updatingTodo = todoRepo.save(todo);
 
-        return new TodoDto(updatingTodo.getId(), updatingTodo.getTask(), updatingTodo.isDone());
-    }
-
-
-    public TodoEntity findById(Long id) {
-        return todoRepo.getOne(id);
+        return new TodoDto(updatingTodo.getId(), updatingTodo.getTask(), updatingTodo.getStatus());
     }
 
     public void deleteTodoListById(Long id) {
         todoRepo.deleteById(id);
     }
 
-    public List<TodoDto> findByUserId(Long id){
+    public List<TodoDto> findByUserId(Long id) {
         UserEntity user = userRepo.getOne(id);
-        if(user == null){
+        if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
         List<TodoEntity> todos = todoRepo.findAllByUser(user);
         return todos
                 .stream()
-                .map(it -> new TodoDto(it.getId(), it.getTask(), it.isDone()))
-                .collect(Collectors.toList());    }
+                .map(it -> new TodoDto(it.getId(), it.getTask(), it.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public TodoDto startBeingInProcess(Long id){
+        TodoEntity todo = todoRepo.getOne(id);
+
+        if (todo == null){
+            throw new EntityNotFoundException("Task not found");
+        }
+
+        if (todo.getStatus().equals(TaskStatus.IN_PROGRESS) || todo.getStatus().equals(TaskStatus.DONE)){
+            throw new IllegalArgumentException("Task status should be new created");
+        }
+
+        todo.setStatus(TaskStatus.IN_PROGRESS);
+        todo.startOfExecuting = LocalDateTime.now();
+
+        TodoEntity todoInProgress = todoRepo.save(todo);
+
+        return new TodoDto(todoInProgress.getId(), todoInProgress.getTask(), todoInProgress.getStatus());
+    }
+
+    public TodoDto finishBeingInProcess(Long id){
+        TodoEntity todo = todoRepo.getOne(id);
+
+        if (todo == null){
+            throw new EntityNotFoundException("Task not found");
+        }
+
+        if (todo.getStatus().equals(TaskStatus.CREATED) || todo.getStatus().equals(TaskStatus.DONE)){
+            throw new IllegalArgumentException("Task status should be in process");
+        }
+
+        todo.setStatus(TaskStatus.DONE);
+        todo.executingCompleted = LocalDateTime.now();
+
+        TodoEntity todoInProgress = todoRepo.save(todo);
+
+        return new TodoDto(todoInProgress.getId(), todoInProgress.getTask(), todoInProgress.getStatus());
+    }
 }

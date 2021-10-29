@@ -1,8 +1,11 @@
 package com.company.toDoList.entities;
 
+import com.company.toDoList.enums.TaskStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "todo")
@@ -15,10 +18,19 @@ public class TodoEntity {
     @Column(name = "task")
     public String task;
 
-    @Column(name = "is_done")
-    public boolean done;
+    @Enumerated
+    @Column(name = "status")
+    public TaskStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     public UserEntity user;
+
+    @Temporal(TemporalType.TIME)
+    @Column(name = "start_of_executing")
+    public LocalDateTime startOfExecuting;
+
+    @Temporal(TemporalType.TIME)
+    @Column(name = "executing_completed")
+    public LocalDateTime executingCompleted;
 }

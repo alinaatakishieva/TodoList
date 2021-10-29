@@ -1,31 +1,24 @@
 package com.company.toDoList.controllers;
 
 
-import com.company.toDoList.dto.TodoDto;
 import com.company.toDoList.dto.UserCreateDto;
 import com.company.toDoList.dto.UserDto;
 import com.company.toDoList.dto.UserUpdateDto;
-import com.company.toDoList.entities.UserEntity;
-import com.company.toDoList.service.TodoService;
 import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-    private final TodoService todoService;
 
     @Autowired
-    public UserController(UserService userService, TodoService todoService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.todoService = todoService;
     }
 
     @GetMapping

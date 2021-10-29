@@ -1,6 +1,6 @@
 package com.company.toDoList.dto;
 
-import com.company.toDoList.entities.TodoEntity;
+import com.company.toDoList.enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 public class TodoDto {
     private Long id;
     private String task;
-    private Boolean done;
-
+    private TaskStatus status;
 }
