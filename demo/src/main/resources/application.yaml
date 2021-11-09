@@ -16,3 +16,9 @@ spring:
           use_jdbc_metadata_defaults: false
     hibernate:
       ddl-auto: update
+      spring:
+        security:
+          oauth2:
+            resourceserver:
+              jwt:
+                jwk-set-uri:

@@ -1,76 +1,52 @@
 package com.company.toDoList.security;
 
 import com.company.toDoList.enums.Roles;
-import com.company.toDoList.repository.UserRepo;
-import com.company.toDoList.security.JwtTokenFilter.JwtTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
-import static java.lang.String.format;
-
+@Configuration //Difference btw @ConfigurationProperties
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserRepo userRepo;
-    private final JwtTokenFilter jwtTokenFilter;
+    @Autowired
+    private DataSource dataSource; // for connection with db
 
-    public SecurityConfig(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {
-        this.userRepo = userRepo;
-        this.jwtTokenFilter = jwtTokenFilter;
+    @Autowired
+    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception { // method for authentication
+        auth.jdbcAuthentication()//method for JDBC-authentication, because i use database
+                .dataSource(dataSource) //method for
+                .passwordEncoder(new BCryptPasswordEncoder()) //to encode the password
+                .usersByUsernameQuery(//request to search a users by his username
+                        "select username, password, enabled from users where username=?")
+                .authoritiesByUsernameQuery(//request to search authorities by username
+                        "select username, role from users where username=?");
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> (UserDetails) userRepo
-                .findByUsername(username)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException(
-                                format("User: %s, not found", username)
-                        )
-                ));
-    }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http = http.cors().and().csrf().disable();
-
-        http = http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and();
-
-        http = http
-                .exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> {
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    ex.getMessage()
-                            );
-                        }
-                )
-                .and();
-
+    public void configure(HttpSecurity http) throws Exception { // method for authorization
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/users").permitAll()
-                .antMatchers(HttpMethod.POST,"/users/id/todos").hasRole(String.valueOf(Roles.ADMIN))
-                .antMatchers(HttpMethod.PUT, "/users/id").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/users/id").hasRole(String.valueOf(Roles.ADMIN));
+                .anyRequest().authenticated()//every request must be authenticated, user must be login
+                .antMatchers("/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/create").hasRole(String.valueOf(Roles.ADMIN))
+                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole(String.valueOf(Roles.ADMIN))
+                .antMatchers(HttpMethod.POST, "/todos/create").hasRole(String.valueOf(Roles.MANAGER))
+                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole(String.valueOf(Roles.EMPLOYEE))
+                .antMatchers("/id/start", "/id/finish").hasRole(String.valueOf(Roles.ACCOUNTANT))
+                .and().formLogin();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 }

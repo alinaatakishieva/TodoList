@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "todo")
@@ -26,11 +25,9 @@ public class TodoEntity {
     @JoinColumn(name = "user_id", nullable = false)
     public UserEntity user;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "start_of_executing")
     public LocalDateTime startOfExecuting;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "executing_completed")
     public LocalDateTime executingCompleted;
 }

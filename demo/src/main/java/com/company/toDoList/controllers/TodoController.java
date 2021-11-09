@@ -3,13 +3,10 @@ package com.company.toDoList.controllers;
 import com.company.toDoList.dto.TodoCreateDto;
 import com.company.toDoList.dto.TodoDto;
 import com.company.toDoList.dto.TodoUpdateDto;
-import com.company.toDoList.entities.TodoEntity;
 import com.company.toDoList.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
