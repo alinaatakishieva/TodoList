@@ -17,16 +17,10 @@ spring:
   hibernate:
     ddl-auto: update
     spring:
-      security:
-        jwt:
-          token:
-            secret-key: secret-key
-            expire-length: 300000
+
   flyway:
     datasources:
       default:
-        locations: classpath:databasemigrations
-  endpoints:
-    flyway:
-      enabled: true
-      sensitive: false
+        locations: classpath:db/migrations
+
+
