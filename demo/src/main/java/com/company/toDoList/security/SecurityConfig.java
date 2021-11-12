@@ -1,6 +1,5 @@
 package com.company.toDoList.security;
 
-import com.company.toDoList.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,21 +31,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    public void configure(HttpSecurity http) throws Exception { // method for authorization
-        http.authorizeRequests()
-                .anyRequest().authenticated()//every request must be authenticated, user must be login
-                .antMatchers("/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/create").hasRole(String.valueOf(Roles.ADMIN))
-                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole(String.valueOf(Roles.ADMIN))
-                .antMatchers(HttpMethod.POST, "/todos/create").hasRole(String.valueOf(Roles.MANAGER))
-                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole(String.valueOf(Roles.EMPLOYEE))
-                .antMatchers("/id/start", "/id/finish").hasRole(String.valueOf(Roles.ACCOUNTANT))
-                .and().formLogin();
-    }
+//    public void configure(HttpSecurity http) throws Exception { // method for authorization
+//        http.authorizeRequests()
+//                .antMatchers("/login").permitAll()
+//                .anyRequest().authenticated()//every request must be authenticated, user must be login
+//                .antMatchers(HttpMethod.POST, "/users/create").hasRole(String.valueOf(Roles.ADMIN))
+//                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole(String.valueOf(Roles.ADMIN))
+//                .antMatchers(HttpMethod.POST, "/todos/create").hasRole(String.valueOf(Roles.MANAGER))
+//                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole(String.valueOf(Roles.EMPLOYEE))
+//                .antMatchers("/id/start", "/id/finish").hasRole(String.valueOf(Roles.ACCOUNTANT))
+//                .and().formLogin();
+//    }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
 
 }

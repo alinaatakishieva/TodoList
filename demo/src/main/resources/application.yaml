@@ -14,11 +14,19 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp:
           use_jdbc_metadata_defaults: false
-    hibernate:
-      ddl-auto: update
-      spring:
-        security:
-          oauth2:
-            resourceserver:
-              jwt:
-                jwk-set-uri:
+  hibernate:
+    ddl-auto: update
+    spring:
+      security:
+        jwt:
+          token:
+            secret-key: secret-key
+            expire-length: 300000
+  flyway:
+    datasources:
+      default:
+        locations: classpath:databasemigrations
+  endpoints:
+    flyway:
+      enabled: true
+      sensitive: false

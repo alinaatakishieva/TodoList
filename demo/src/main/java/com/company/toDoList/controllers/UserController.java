@@ -8,6 +8,7 @@ import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto findById(@PathVariable Long id){
+    public UserDto findById(@PathVariable Long id) {
+        if (id == null) {
+            throw new EntityNotFoundException("User with id " + id + " not found");
+        }
+
         return userService.findById(id);
     }
 
@@ -38,11 +43,19 @@ public class UserController {
 
     @PutMapping("/{id}")
     public UserDto update(@PathVariable("id") Long id, @RequestBody UserUpdateDto userUpdateDto) {
+        if (id == null) {
+            throw new EntityNotFoundException("User with id " + id + " not found");
+        }
+
         return userService.update(id, userUpdateDto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
+        if (id == null) {
+            throw new EntityNotFoundException("User with id " + id + "not found");
+        }
+
         userService.deleteById(id);
     }
 

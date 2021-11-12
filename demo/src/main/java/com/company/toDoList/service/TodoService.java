@@ -10,13 +10,10 @@ import com.company.toDoList.repository.TodoRepo;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,27 +29,35 @@ public class TodoService {
     }
 
     public TodoDto create(Long id, TodoCreateDto todoCreateDto) {
-        UserEntity user = userRepo.getOne(id);
+        UserEntity user = userRepo.findById(id).orElse(null);
+
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
+
         TodoEntity todo = new TodoEntity();
         todo.setTask(todoCreateDto.getTask());
         todo.setUser(user);
         todo.setStatus(TaskStatus.CREATED);
+
         TodoEntity createdTodoEntity = todoRepo.save(todo);
+
         return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.getStatus());
     }
 
     public TodoDto update(Long id, Long userId, TodoUpdateDto todoUpdateDto) {
-        TodoEntity todo = todoRepo.getOne(id);
+        TodoEntity todo = todoRepo.findById(id).orElse(null);
+
         if (todo == null) {
             throw new EntityNotFoundException("Todo list not found");
         }
-        UserEntity user = userRepo.getOne(userId);
+
+        UserEntity user = userRepo.findById(userId).orElse(null);
+
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
+
         todo.setTask(todoUpdateDto.getTask());
         todo.setStatus(todoUpdateDto.getStatus());
 
@@ -66,10 +71,12 @@ public class TodoService {
     }
 
     public List<TodoDto> findByUserId(Long id) {
-        UserEntity user = userRepo.getOne(id);
+        UserEntity user = userRepo.findById(id).orElse(null);
+
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
+
         List<TodoEntity> todos = todoRepo.findAllByUser(user);
         return todos
                 .stream()
@@ -78,7 +85,7 @@ public class TodoService {
     }
 
     public TodoDto startBeingInProcess(Long id){
-        TodoEntity todo = todoRepo.getOne(id);
+        TodoEntity todo = todoRepo.findById(id).orElse(null);
 
         if (todo == null){
             throw new EntityNotFoundException("Task not found");
@@ -97,7 +104,7 @@ public class TodoService {
     }
 
     public TodoDto finishBeingInProcess(Long id){
-        TodoEntity todo = todoRepo.getOne(id);
+        TodoEntity todo = todoRepo.findById(id).orElse(null);
 
         if (todo == null){
             throw new EntityNotFoundException("Task not found");
