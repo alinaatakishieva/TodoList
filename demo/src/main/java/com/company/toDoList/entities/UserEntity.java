@@ -25,6 +25,7 @@ public class UserEntity {
     @Column(name = "password")
     public String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     public Roles role;
 }

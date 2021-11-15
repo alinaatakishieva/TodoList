@@ -46,7 +46,7 @@ public class UserService {
             throw new EntityNotFoundException("Not found");
         }
 
-        return new UserDto(user.getId(), user.getFirstname(), user.getLastname(), convertToTodoDto(user));
+        return new UserDto(user.getId(), user.getFirstname(), user.getLastname(), user.getUsername(), user.getPassword(), user.getRole(), convertToTodoDto(user));
     }
 
     private List<TodoDto> convertToTodoDto(UserEntity userEntity) {
@@ -59,7 +59,7 @@ public class UserService {
     public List<UserDto> findAll() {
         return userRepo.findAll()
                 .stream()
-                .map(userEntity -> new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), convertToTodoDto(userEntity)))
+                .map(userEntity -> new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), userEntity.getUsername(), userEntity.getPassword(), userEntity.getRole(), convertToTodoDto(userEntity)))
                 .collect(Collectors.toList());
     }
 
@@ -74,7 +74,7 @@ public class UserService {
 
         UserEntity createdUser = userRepo.save(user);
 
-        return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), convertToTodoDto(user));
+        return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), createdUser.getUsername(), createdUser.getPassword(), createdUser.getRole(), convertToTodoDto(user));
     }
 
     public void deleteById(Long id) {
@@ -94,6 +94,6 @@ public class UserService {
 
         UserEntity updatingUser = userRepo.save(user);
 
-        return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), convertToTodoDto(user));
+        return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), updatingUser.getRole(), convertToTodoDto(user));
     }
 }

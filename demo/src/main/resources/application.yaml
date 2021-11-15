@@ -19,6 +19,8 @@ spring:
     spring:
 
   flyway:
+    schemas: migrations
+    baseline: true
     datasources:
       default:
         locations: classpath:db/migrations

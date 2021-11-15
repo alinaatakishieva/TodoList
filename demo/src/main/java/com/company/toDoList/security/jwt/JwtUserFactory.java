@@ -1,6 +1,7 @@
 //package com.company.toDoList.security.jwt;
 //
 //import com.company.toDoList.entities.UserEntity;
+//import com.company.toDoList.enums.Roles;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
 //
@@ -27,7 +28,7 @@
 //        );
 //    }
 //
-//    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Role> userRoles) {
+//    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> userRoles) {
 //        return userRoles.stream()
 //                .map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 //    }

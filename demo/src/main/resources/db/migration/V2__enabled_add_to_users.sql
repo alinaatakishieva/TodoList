@@ -1,1 +1,0 @@
-ALTER TABLE users add column enabled boolean default true;
