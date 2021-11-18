@@ -26,6 +26,9 @@ public class UserEntity {
     @Column(name = "password")
     public String password;
 
+    @Column(name = "enabled", nullable = false)
+    public boolean enabled;
+
     @ManyToMany
     @JoinTable(name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id")},
