@@ -2,7 +2,7 @@ package com.company.toDoList.service;
 
 import com.company.toDoList.dto.*;
 import com.company.toDoList.entities.UserEntity;
-import com.company.toDoList.enums.Roles;
+import com.company.toDoList.repository.RoleRepo;
 import com.company.toDoList.repository.TodoRepo;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,14 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final TodoRepo todoRepo;
+    private final RoleRepo roleRepo;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo, TodoRepo todoRepo, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, TodoRepo todoRepo, RoleRepo roleRepo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.todoRepo = todoRepo;
+        this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -46,7 +48,14 @@ public class UserService {
             throw new EntityNotFoundException("Not found");
         }
 
-        return new UserDto(user.getId(), user.getFirstname(), user.getLastname(), user.getUsername(), user.getPassword(), user.getRole(), convertToTodoDto(user));
+        return new UserDto(user.getId(), user.getFirstname(), user.getLastname(), user.getUsername(), user.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
+    }
+
+    private List<RoleDto> convertToRoleDto(UserEntity userEntity){
+        return roleRepo.findAllByUsers(userEntity)
+                .stream()
+                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName()))
+                .collect(Collectors.toList());
     }
 
     private List<TodoDto> convertToTodoDto(UserEntity userEntity) {
@@ -59,7 +68,7 @@ public class UserService {
     public List<UserDto> findAll() {
         return userRepo.findAll()
                 .stream()
-                .map(userEntity -> new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), userEntity.getUsername(), userEntity.getPassword(), userEntity.getRole(), convertToTodoDto(userEntity)))
+                .map(userEntity -> new UserDto(userEntity.getId(), userEntity.getFirstname(), userEntity.getLastname(), userEntity.getUsername(), userEntity.getPassword(), convertToRoleDto(userEntity), convertToTodoDto(userEntity)))
                 .collect(Collectors.toList());
     }
 
@@ -70,15 +79,18 @@ public class UserService {
         user.setLastname(userCreateDto.getLastname());
         user.setUsername(userCreateDto.getUsername());
         user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
-        user.setRole(Roles.USER);
 
         UserEntity createdUser = userRepo.save(user);
 
-        return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), createdUser.getUsername(), createdUser.getPassword(), createdUser.getRole(), convertToTodoDto(user));
+        return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), createdUser.getUsername(), createdUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
     public void deleteById(Long id) {
         userRepo.deleteById(id);
+
+        if (id == null){
+            throw new IllegalArgumentException("User with id " + id + " not found");
+        }
     }
 
     public UserDto update(Long id, UserUpdateDto userUpdateDto) {
@@ -90,10 +102,10 @@ public class UserService {
 
         user.setFirstname(userUpdateDto.getFirstname());
         user.setLastname(userUpdateDto.getLastname());
-        user.setRole(userUpdateDto.getRole());
+        user.setRoles(userUpdateDto.getRoles());
 
         UserEntity updatingUser = userRepo.save(user);
 
-        return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), updatingUser.getRole(), convertToTodoDto(user));
+        return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 }

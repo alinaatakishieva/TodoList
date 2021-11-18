@@ -16,7 +16,8 @@ spring:
           use_jdbc_metadata_defaults: false
   hibernate:
     ddl-auto: update
-    spring:
+    jwt:
+      secret: javamaster
 
   flyway:
     schemas: migrations

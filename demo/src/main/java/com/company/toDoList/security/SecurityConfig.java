@@ -1,6 +1,5 @@
 package com.company.toDoList.security;
 
-import com.company.toDoList.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
 
-@Configuration //Difference btw @ConfigurationProperties
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Configuration //Difference btw @ConfigurationProperties?
+@EnableWebSecurity // класс является классом настроек Spring Security.
+public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurityConfigurerAdapter - данный класс позволяет настроить всю систему секюрити и авторизации под свои нужды.
 
     @Autowired
     private DataSource dataSource; // for connection with db
@@ -37,14 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    public void configure(HttpSecurity http) throws Exception { // method for authorization
+    protected void configure(HttpSecurity http) throws Exception { // method for authorization
         http.authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/create").hasRole(String.valueOf(Roles.ADMIN))
-                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole(String.valueOf(Roles.ADMIN))
-                .antMatchers(HttpMethod.POST, "/todos/create").hasRole(String.valueOf(Roles.MANAGER))
-                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole(String.valueOf(Roles.EMPLOYEE))
-                .antMatchers("/id/start", "/id/finish").hasRole(String.valueOf(Roles.ACCOUNTANT))
+                .antMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/todos/create").hasRole("MANAGER")
+                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole("EMPLOYEE")
+                .antMatchers("/id/start", "/id/finish").hasRole("ACCOUNTANT")
                 .and().formLogin();
     }
 }

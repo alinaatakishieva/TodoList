@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "todo")
+@Table(name = "todos")
 @Data
 public class TodoEntity {
     @Id
@@ -28,6 +28,6 @@ public class TodoEntity {
     @Column(name = "start_of_executing")
     public LocalDateTime startOfExecuting;
 
-    @Column(name = "executing_completed")
+    @Column(name = "end_of_executing")
     public LocalDateTime executingCompleted;
 }

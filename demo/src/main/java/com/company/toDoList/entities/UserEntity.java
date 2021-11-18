@@ -1,9 +1,10 @@
 package com.company.toDoList.entities;
 
-import com.company.toDoList.enums.Roles;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,7 +26,9 @@ public class UserEntity {
     @Column(name = "password")
     public String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    public Roles role;
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    public Set<RoleEntity> roles;
 }
