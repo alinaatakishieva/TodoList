@@ -31,6 +31,7 @@ public class JwtUser implements UserDetails {
     public Long getId(){return id;}
 
     @Override
+    //Granted authority is for permissions
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
