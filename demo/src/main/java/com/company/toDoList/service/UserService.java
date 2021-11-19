@@ -54,7 +54,7 @@ public class UserService {
     private List<RoleDto> convertToRoleDto(UserEntity userEntity){
         return roleRepo.findAllByUsers(userEntity)
                 .stream()
-                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName()))
+                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName(), roleEntity.getPermissions()))
                 .collect(Collectors.toList());
     }
 

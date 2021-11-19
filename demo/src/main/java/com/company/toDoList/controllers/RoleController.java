@@ -21,7 +21,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public RoleDto createRole(@PathVariable RoleCreateDto roleCreateDto) {
+    public RoleDto createRole(@RequestBody RoleCreateDto roleCreateDto) {
         return roleService.createRole(roleCreateDto);
     }
 

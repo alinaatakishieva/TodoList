@@ -4,10 +4,10 @@ import com.company.toDoList.dto.RoleCreateDto;
 import com.company.toDoList.dto.RoleDto;
 import com.company.toDoList.dto.RoleUpdateDto;
 import com.company.toDoList.entities.RoleEntity;
-import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.repository.RoleRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -30,7 +30,7 @@ public class RoleService {
 
         RoleEntity createdRole = roleRepo.save(role);
 
-        return new RoleDto(createdRole.getId(), createdRole.getName());
+        return new RoleDto(createdRole.getId(), createdRole.getName(), createdRole.getPermissions());
     }
 //
 //    public List<RoleDto> convertToUserDto(UserEntity userEntity){
@@ -47,13 +47,13 @@ public class RoleService {
             throw new EntityNotFoundException("Role not found");
         }
 
-        return new RoleDto(role.getId(), role.getName());
+        return new RoleDto(role.getId(), role.getName(), role.getPermissions());
     }
 
     public List<RoleDto> findAll (){
         return roleRepo.findAll()
                 .stream()
-                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName()))
+                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName(), roleEntity.getPermissions()))
                 .collect(Collectors.toList());
     }
 
@@ -76,6 +76,6 @@ public class RoleService {
 
         RoleEntity updatedRole = roleRepo.save(role);
 
-        return new RoleDto(updatedRole.getId(), updatedRole.getName());
+        return new RoleDto(updatedRole.getId(), updatedRole.getName(), updatedRole.getPermissions());
     }
 }

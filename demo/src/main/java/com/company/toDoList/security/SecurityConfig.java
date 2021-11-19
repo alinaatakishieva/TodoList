@@ -27,7 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurity
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception { // method for authentication
         auth.jdbcAuthentication()//method for JDBC-authentication, because i use database
-                .dataSource(dataSource) //method for
                 .passwordEncoder(passwordEncoder()) //to encode the password
                 .usersByUsernameQuery(//request to search a users by his username
                         "select username, password, enabled from users where username=?")
@@ -35,10 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurity
                         "select username, role from users where username=?");
     }
 
-
     protected void configure(HttpSecurity http) throws Exception { // method for authorization
         http
                 .csrf().disable()
+                .sessionManagement().disable()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
