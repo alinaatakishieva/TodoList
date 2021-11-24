@@ -16,11 +16,13 @@ spring:
           use_jdbc_metadata_defaults: false
   hibernate:
     ddl-auto: update
+
     jwt:
+      expiration: 1296000
       secret: javamaster
 
   flyway:
-    schemas: migrations
+    schemas: public
     baseline: true
     datasources:
       default:

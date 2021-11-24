@@ -6,8 +6,11 @@ import com.company.toDoList.dto.UserDto;
 import com.company.toDoList.dto.UserUpdateDto;
 import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -28,6 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Secured({"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     public UserDto findById(@PathVariable Long id) {
         if (id == null) {
             throw new EntityNotFoundException("User with id " + id + " not found");
@@ -37,11 +41,15 @@ public class UserController {
     }
 
     @PostMapping
+    @RolesAllowed("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserDto create(@RequestBody UserCreateDto userCreateDto) {
         return userService.create(userCreateDto);
     }
 
     @PutMapping("/{id}")
+    @RolesAllowed("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole(['ROLE_ADMIN', 'ROLE_MANAGER'])")
     public UserDto update(@PathVariable("id") Long id, @RequestBody UserUpdateDto userUpdateDto) {
         if (id == null) {
             throw new EntityNotFoundException("User with id " + id + " not found");
@@ -51,6 +59,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @RolesAllowed("hasRole('ROLE_ADMIN')")
     public void deleteUser(@PathVariable("id") Long id) {
         if (id == null) {
             throw new EntityNotFoundException("User with id " + id + "not found");
@@ -60,3 +69,4 @@ public class UserController {
     }
 
 }
+

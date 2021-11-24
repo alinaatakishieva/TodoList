@@ -16,11 +16,13 @@ public class JwtTokenProvider { // class for generating token from username
     @Value("$(jwt.secret)")
     private String jwtSecret;
 
-    public String generateToken(String username){
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    @Value("$(jwt.expiration)")
+    private String expiration;
+
+    public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)//логин пользователя, чтобы потом его оттуда забрать в фильтре, когда пользователь будет делать запрос.
-                .setExpiration(date) // after 15 days, token shod be upgraded
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // after 15 days, token shod be upgraded
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)//algorithm for encoding, and secret word for decoding
                 .compact();
     }

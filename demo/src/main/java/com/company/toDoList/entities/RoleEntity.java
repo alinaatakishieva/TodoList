@@ -1,6 +1,7 @@
 package com.company.toDoList.entities;
 
 import lombok.Data;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 import java.util.Collection;

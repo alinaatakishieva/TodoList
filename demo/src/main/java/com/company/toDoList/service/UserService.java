@@ -1,6 +1,7 @@
 package com.company.toDoList.service;
 
 import com.company.toDoList.dto.*;
+import com.company.toDoList.entities.RoleEntity;
 import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.repository.RoleRepo;
 import com.company.toDoList.repository.TodoRepo;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +53,7 @@ public class UserService {
         return new UserDto(user.getId(), user.getFirstname(), user.getLastname(), user.getUsername(), user.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
-    private List<RoleDto> convertToRoleDto(UserEntity userEntity){
+    private List<RoleDto> convertToRoleDto(UserEntity userEntity) {
         return roleRepo.findAllByUsers(userEntity)
                 .stream()
                 .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName(), roleEntity.getPermissions()))
@@ -79,6 +81,7 @@ public class UserService {
         user.setLastname(userCreateDto.getLastname());
         user.setUsername(userCreateDto.getUsername());
         user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
+        user.setRoles(userCreateDto.getRoles());
 
         UserEntity createdUser = userRepo.save(user);
 
@@ -88,7 +91,7 @@ public class UserService {
     public void deleteById(Long id) {
         userRepo.deleteById(id);
 
-        if (id == null){
+        if (id == null) {
             throw new IllegalArgumentException("User with id " + id + " not found");
         }
     }
@@ -108,4 +111,14 @@ public class UserService {
 
         return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
+
+//    public UserDto addRole(Long userId, RoleDto roleDto) {
+//        UserEntity user = userRepo.findById(userId).orElse(null);
+//
+//        if (userId == null) {
+//            throw new EntityNotFoundException("User with id " + userId + " not found");
+//        }
+//
+//        user.setRoles(roleDto.getId());
+//    }
 }

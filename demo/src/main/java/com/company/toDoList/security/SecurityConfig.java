@@ -1,50 +1,56 @@
 package com.company.toDoList.security;
 
+import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.sql.DataSource;
+import static java.lang.String.format;
+
 
 @Configuration //Difference btw @ConfigurationProperties?
 @EnableWebSecurity // класс является классом настроек Spring Security.
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurityConfigurerAdapter - данный класс позволяет настроить всю систему секюрити и авторизации под свои нужды.
 
-    @Autowired
-    private DataSource dataSource; // for connection with db
+    private final UserRepo userRepo;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public SecurityConfig(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
-    @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception { // method for authentication
-        auth.jdbcAuthentication()//method for JDBC-authentication, because i use database
-                .passwordEncoder(passwordEncoder()) //to encode the password
-                .usersByUsernameQuery(//request to search a users by his username
-                        "select username, password, enabled from users where username=?")
-                .authoritiesByUsernameQuery(//request to search authorities by username
-                        "select username, role from users where username=?");
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(username -> userRepo
+//                .findByUsername(username)
+//                .orElseThrow(
+//                        () -> new UsernameNotFoundException("User not found")
+//                ));
+//    }
 
-    protected void configure(HttpSecurity http) throws Exception { // method for authorization
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .sessionManagement().disable()
+                .sessionManagement()
+                .disable()
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/users/delete").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/todos/create").hasRole("MANAGER")
-                .antMatchers(HttpMethod.GET, "/users/{userId}/todos", "/id/start", "/id/finish").hasRole("EMPLOYEE")
-                .antMatchers("/id/start", "/id/finish").hasRole("ACCOUNTANT")
-                .and().formLogin();
+                .anyRequest()
+                .authenticated();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
