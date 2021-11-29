@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,13 +113,17 @@ public class UserService {
         return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
-//    public UserDto addRole(Long userId, RoleDto roleDto) {
-//        UserEntity user = userRepo.findById(userId).orElse(null);
-//
-//        if (userId == null) {
-//            throw new EntityNotFoundException("User with id " + userId + " not found");
-//        }
-//
-//        user.setRoles(roleDto.getId());
-//    }
+    public UserEntity addRole(Long userId, Set<RoleEntity> roleId) {
+        UserEntity user = userRepo.findById(userId).orElse(null);
+
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        user.setRoles(roleId);
+
+        UserEntity userWithRole = userRepo.save(user);
+
+        return userWithRole;
+    }
 }

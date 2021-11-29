@@ -3,8 +3,6 @@ package com.company.toDoList.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,4 +33,5 @@ public class UserEntity {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     public Set<RoleEntity> roles;
+
 }

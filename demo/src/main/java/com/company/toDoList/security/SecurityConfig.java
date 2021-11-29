@@ -15,12 +15,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 import static java.lang.String.format;
 
 
-@Configuration //Difference btw @ConfigurationProperties?
+@Configuration
 @EnableWebSecurity // класс является классом настроек Spring Security.
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+
 public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurityConfigurerAdapter - данный класс позволяет настроить всю систему секюрити и авторизации под свои нужды.
 
     private final UserRepo userRepo;
@@ -29,14 +31,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurity
         this.userRepo = userRepo;
     }
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(username -> userRepo
-//                .findByUsername(username)
-//                .orElseThrow(
-//                        () -> new UsernameNotFoundException("User not found")
-//                ));
-//    }
+    private DataSource dataSource;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(username -> userRepo
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException(
+                                format("User: %s, not found", username)
+                        )
+                ));
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -50,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //WebSecurity
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -4,6 +4,8 @@ package com.company.toDoList.controllers;
 import com.company.toDoList.dto.UserCreateDto;
 import com.company.toDoList.dto.UserDto;
 import com.company.toDoList.dto.UserUpdateDto;
+import com.company.toDoList.entities.RoleEntity;
+import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -66,6 +69,15 @@ public class UserController {
         }
 
         userService.deleteById(id);
+    }
+
+    @PostMapping("/{id}/addRole")
+    public UserEntity addRole(@PathVariable("id") Long id, @RequestBody Set<RoleEntity> role){
+        if (id == null){
+            throw new IllegalArgumentException("User not found");
+        }
+
+        return userService.addRole(id, role);
     }
 
 }
