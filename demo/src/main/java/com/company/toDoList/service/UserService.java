@@ -113,17 +113,18 @@ public class UserService {
         return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
-    public UserEntity addRole(Long userId, Set<RoleEntity> roleId) {
-        UserEntity user = userRepo.findById(userId).orElse(null);
+//    public UserEntity addRole(Long userId, Set<RoleEntity> roleId) {
+//        UserEntity user = userRepo.findById(userId).orElse(null);
+//
+//        if (user == null) {
+//            throw new EntityNotFoundException("User not found");
+//        }
+//
+//        user.setRoles(roleId);
+//
+//        UserEntity userWithRole = userRepo.save(user);
+//
+//        return userWithRole;
+//    }
 
-        if (user == null) {
-            throw new EntityNotFoundException("User not found");
-        }
-
-        user.setRoles(roleId);
-
-        UserEntity userWithRole = userRepo.save(user);
-
-        return userWithRole;
-    }
 }

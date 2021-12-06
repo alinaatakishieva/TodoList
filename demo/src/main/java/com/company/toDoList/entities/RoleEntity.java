@@ -1,7 +1,7 @@
 package com.company.toDoList.entities;
 
+import com.company.toDoList.entities.base.TimedEntity;
 import lombok.Data;
-import org.apache.catalina.User;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -10,12 +10,9 @@ import java.util.List;
 @Entity
 @Table(name = "roles")
 @Data
-public class RoleEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class RoleEntity extends TimedEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     public String name;
 
     @ManyToMany(mappedBy = "roles")

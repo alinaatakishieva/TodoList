@@ -32,7 +32,7 @@ public class TodoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority")
     public TodoDto create(@PathVariable Long userId, @RequestBody TodoCreateDto todoCreateDto) {
         if (userId == null) {
             throw new EntityNotFoundException("User with id " + userId + " not found");
@@ -42,7 +42,7 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority")
     public TodoDto update(@PathVariable Long userId, @PathVariable("id") Long id, @RequestBody TodoUpdateDto todoUpdateDto) {
         if (userId == null) {
             throw new EntityNotFoundException("User with id " + userId + " not found");
@@ -56,7 +56,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority")
     public void deleteTodo(@PathVariable("id") Long id) {
         if (id == null) {
             throw new EntityNotFoundException("Task with id " + id + " not found");
@@ -66,7 +66,7 @@ public class TodoController {
     }
 
     @PostMapping("/id/start")
-    @PreAuthorize("hasRole('ROLE_ACCOUNTANT')")
+    @PreAuthorize("hasAnyAuthority")
     public TodoDto executionStart(@PathVariable("id") Long id) {
         if (id == null) {
             throw new EntityNotFoundException("Task with id " + id + " not found");
@@ -76,7 +76,7 @@ public class TodoController {
     }
 
     @PostMapping("/id/finish")
-    @PreAuthorize("hasRole('ROLE_ACCOUNTANT')")
+    @PreAuthorize("hasAnyAuthority")
     public TodoDto executionFinish(@PathVariable("id") Long id) {
         if (id == null) {
             throw new EntityNotFoundException("Task with id " + id + " not found");

@@ -1,5 +1,6 @@
 package com.company.toDoList.entities;
 
+import com.company.toDoList.entities.base.TimedEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,10 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
-public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserEntity extends TimedEntity {
 
     @Column(name = "firstname")
     public String firstname;
@@ -19,7 +17,7 @@ public class UserEntity {
     @Column(name = "lastname")
     public String lastname;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     public String username;
 
     @Column(name = "password")

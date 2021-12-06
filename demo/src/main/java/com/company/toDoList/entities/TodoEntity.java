@@ -1,5 +1,6 @@
 package com.company.toDoList.entities;
 
+import com.company.toDoList.entities.base.TimedEntity;
 import com.company.toDoList.enums.TaskStatus;
 import lombok.*;
 
@@ -9,10 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "todos")
 @Data
-public class TodoEntity {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class TodoEntity extends TimedEntity {
 
     @Column(name = "task")
     public String task;
