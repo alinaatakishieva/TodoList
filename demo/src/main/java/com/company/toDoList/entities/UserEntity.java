@@ -2,6 +2,7 @@ package com.company.toDoList.entities;
 
 import com.company.toDoList.entities.base.TimedEntity;
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.Set;
