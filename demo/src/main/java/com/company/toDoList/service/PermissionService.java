@@ -6,6 +6,7 @@ import com.company.toDoList.dto.PermissionUpdateDto;
 import com.company.toDoList.entities.PermissionEntity;
 import com.company.toDoList.repository.PermissionRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -20,6 +21,7 @@ public class PermissionService {
         this.permissionRepo = permissionRepo;
     }
 
+    @Transactional
     public PermissionDto create(PermissionCreateDto permissionCreateDto) {
         PermissionEntity permission = new PermissionEntity();
         permission.setName(permissionCreateDto.getName());
@@ -45,6 +47,7 @@ public class PermissionService {
         return new PermissionDto(permission.getId(), permission.getName());
     }
 
+    @Transactional
     public PermissionDto update(Long id, PermissionUpdateDto permissionUpdateDto){
         PermissionEntity permission = permissionRepo.findById(id).orElse(null);
 
@@ -59,6 +62,7 @@ public class PermissionService {
         return new PermissionDto(updatedPermission.getId(), updatedPermission.getName());
     }
 
+    @Transactional
     public void delete(Long id){
         permissionRepo.deleteById(id);
 

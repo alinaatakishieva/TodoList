@@ -7,6 +7,7 @@ import com.company.toDoList.entities.RoleEntity;
 import com.company.toDoList.repository.RoleRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityNotFoundException;
@@ -23,6 +24,7 @@ public class RoleService {
         this.roleRepo = roleRepo;
     }
 
+    @Transactional
     public RoleDto createRole(RoleCreateDto roleCreateDto){
         RoleEntity role = new RoleEntity();
 
@@ -32,13 +34,6 @@ public class RoleService {
 
         return new RoleDto(createdRole.getId(), createdRole.getName(), createdRole.getPermissions());
     }
-//
-//    public List<RoleDto> convertToUserDto(UserEntity userEntity){
-//        return roleRepo.findAllByUser(userEntity)
-//                .stream()
-//                .map(roleEntity -> new RoleDto(roleEntity.getId(), roleEntity.getName(), roleEntity.getUsers()))
-//                .collect(Collectors.toList());
-//    }
 
     public RoleDto findById(Long id){
         RoleEntity role = roleRepo.findById(id).orElse(null);
@@ -57,6 +52,7 @@ public class RoleService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteRoleById(Long id){
         roleRepo.deleteById(id);
 
@@ -65,6 +61,7 @@ public class RoleService {
         }
     }
 
+    @Transactional
     public RoleDto updateRole(Long id, RoleUpdateDto roleUpdateDto){
         RoleEntity role = roleRepo.findById(id).orElse(null);
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.EntityNotFoundException;
@@ -75,6 +76,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public UserDto create(UserCreateDto userCreateDto) {
         UserEntity user = new UserEntity();
 
@@ -89,6 +91,7 @@ public class UserService {
         return new UserDto(createdUser.getId(), createdUser.getFirstname(), createdUser.getLastname(), createdUser.getUsername(), createdUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
+    @Transactional
     public void deleteById(Long id) {
         userRepo.deleteById(id);
 
@@ -97,6 +100,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public UserDto update(Long id, UserUpdateDto userUpdateDto) {
         UserEntity user = userRepo.findById(id).orElse(null);
 
@@ -113,14 +117,21 @@ public class UserService {
         return new UserDto(updatingUser.getId(), updatingUser.getFirstname(), updatingUser.getLastname(), updatingUser.getUsername(), updatingUser.getPassword(), convertToRoleDto(user), convertToTodoDto(user));
     }
 
-//    public UserEntity addRole(Long userId, Set<RoleEntity> roleId) {
+//    public UserEntity addRole(Long userId, Set<Long> roleId) {
 //        UserEntity user = userRepo.findById(userId).orElse(null);
+//        RoleEntity roles = (RoleEntity) roleRepo.findAllById(roleId);
 //
 //        if (user == null) {
 //            throw new EntityNotFoundException("User not found");
 //        }
 //
-//        user.setRoles(roleId);
+//        if (roles == null){
+//            throw new EntityNotFoundException("Error")
+//        }
+//
+//        user.setRoles();
+//
+//
 //
 //        UserEntity userWithRole = userRepo.save(user);
 //

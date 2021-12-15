@@ -10,6 +10,7 @@ import com.company.toDoList.repository.TodoRepo;
 import com.company.toDoList.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class TodoService {
         this.userRepo = userRepo;
     }
 
+    @Transactional
     public TodoDto create(Long id, TodoCreateDto todoCreateDto) {
         UserEntity user = userRepo.findById(id).orElse(null);
 
@@ -45,6 +47,7 @@ public class TodoService {
         return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.getStatus());
     }
 
+    @Transactional
     public TodoDto update(Long id, Long userId, TodoUpdateDto todoUpdateDto) {
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
@@ -66,6 +69,7 @@ public class TodoService {
         return new TodoDto(updatingTodo.getId(), updatingTodo.getTask(), updatingTodo.getStatus());
     }
 
+    @Transactional
     public void deleteTodoListById(Long id) {
         todoRepo.deleteById(id);
     }
@@ -84,6 +88,7 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public TodoDto startBeingInProcess(Long id){
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
@@ -103,6 +108,7 @@ public class TodoService {
         return new TodoDto(todoInProgress.getId(), todoInProgress.getTask(), todoInProgress.getStatus());
     }
 
+    @Transactional
     public TodoDto finishBeingInProcess(Long id){
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
