@@ -21,6 +21,14 @@ public class FileEntity extends BaseEntity {
     @Column(name = "size")
     public Long size;
 
+    public byte[] data;
+
     @OneToOne
     public TodoEntity todo;
+
+    public FileEntity(String name, String extension, byte[] data) {
+        this.name = name;
+        this.extension = extension;
+        this.data = data;
+    }
 }

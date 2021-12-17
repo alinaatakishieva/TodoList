@@ -1,9 +1,12 @@
 package com.company.toDoList.service;
 
+import com.company.toDoList.entities.FileEntity;
 import com.company.toDoList.exceptions.FileStorageException;
 import com.company.toDoList.exceptions.MyFileNotFoundException;
 import com.company.toDoList.properties.FileStorageProperties;
+import com.company.toDoList.repository.FileRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
@@ -19,56 +22,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.stream.Stream;
 
 @Service
 public class FileStorageService {
 
-    private final Path fileStorageLocation;
+    private final FileRepo fileRepo;
 
     @Autowired
-    public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
-                .toAbsolutePath().normalize();
-
-        try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
-        }
+    public FileStorageService(FileRepo fileRepo) {
+        this.fileRepo = fileRepo;
     }
 
-
-    public String storeFile(MultipartFile file) {
-        // Normalize file name
+    public FileEntity storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        FileEntity storedFile = new FileEntity(fileName, file.getContentType(), file.getBytes());
 
-        try {
-            // Check if the file's name contains invalid characters
-            if (fileName.contains("..")) {
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            }
-
-            // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-            return fileName;
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
-        }
+        return fileRepo.save(storedFile);
     }
 
-    public Resource loadFileAsResource(String fileName) {
-        try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
-                return resource;
-            } else {
-                throw new MyFileNotFoundException("File not found " + fileName);
-            }
-        } catch (MalformedURLException ex) {
-            throw new MyFileNotFoundException("File not found " + fileName, ex);
-        }
+    public FileEntity getFile(Long id){
+        return fileRepo.findById(id).get();
     }
+
+    public Stream<FileEntity> getAllFiles() {
+        return fileRepo.findAll().stream();
+    }
+
+
+
 }
