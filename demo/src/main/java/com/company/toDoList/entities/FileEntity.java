@@ -18,13 +18,13 @@ public class FileEntity extends BaseEntity {
     @Column(name = "extension")
     public String extension;
 
-    @Column(name = "size")
-    public Long size;
-
+    @Column(name = "bytes")
     public byte[] data;
 
     @OneToOne
     public TodoEntity todo;
+
+    public FileEntity(){}
 
     public FileEntity(String name, String extension, byte[] data) {
         this.name = name;

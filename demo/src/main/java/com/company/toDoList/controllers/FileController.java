@@ -45,7 +45,7 @@ public class FileController {
         return null;
     }
 
-    @GetMapping("/allFiles")
+    @GetMapping("/getAllFiles")
     public ResponseEntity<List<ResponseFile>> getAllFiles(){
         List<ResponseFile> files = fileStorageService.getAllFiles().map(fileEntity -> {
             String fileDownloadUri = ServletUriComponentsBuilder

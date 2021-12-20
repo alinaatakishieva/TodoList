@@ -4,8 +4,6 @@ package com.company.toDoList.controllers;
 import com.company.toDoList.dto.UserCreateDto;
 import com.company.toDoList.dto.UserDto;
 import com.company.toDoList.dto.UserUpdateDto;
-import com.company.toDoList.entities.RoleEntity;
-import com.company.toDoList.entities.UserEntity;
 import com.company.toDoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -27,6 +24,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize(("hasAnyAuthority('ROLE_ADMIN')"))
     public List<UserDto> findAll() {
         return userService.findAll();
     }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TodoService {
 
     private final TodoRepo todoRepo;
@@ -29,7 +30,7 @@ public class TodoService {
         this.userRepo = userRepo;
     }
 
-    @Transactional
+
     public TodoDto create(Long id, TodoCreateDto todoCreateDto) {
         UserEntity user = userRepo.findById(id).orElse(null);
 
@@ -47,7 +48,7 @@ public class TodoService {
         return new TodoDto(createdTodoEntity.getId(), createdTodoEntity.getTask(), createdTodoEntity.getStatus());
     }
 
-    @Transactional
+
     public TodoDto update(Long id, Long userId, TodoUpdateDto todoUpdateDto) {
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
@@ -69,7 +70,7 @@ public class TodoService {
         return new TodoDto(updatingTodo.getId(), updatingTodo.getTask(), updatingTodo.getStatus());
     }
 
-    @Transactional
+
     public void deleteTodoListById(Long id) {
         todoRepo.deleteById(id);
     }
@@ -88,15 +89,15 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public TodoDto startBeingInProcess(Long id){
+
+    public TodoDto startBeingInProcess(Long id) {
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
-        if (todo == null){
+        if (todo == null) {
             throw new EntityNotFoundException("Task not found");
         }
 
-        if (todo.getStatus().equals(TaskStatus.IN_PROGRESS) || todo.getStatus().equals(TaskStatus.DONE)){
+        if (todo.getStatus().equals(TaskStatus.IN_PROGRESS) || todo.getStatus().equals(TaskStatus.DONE)) {
             throw new IllegalArgumentException("Task status should be new created");
         }
 
@@ -108,15 +109,15 @@ public class TodoService {
         return new TodoDto(todoInProgress.getId(), todoInProgress.getTask(), todoInProgress.getStatus());
     }
 
-    @Transactional
-    public TodoDto finishBeingInProcess(Long id){
+
+    public TodoDto finishBeingInProcess(Long id) {
         TodoEntity todo = todoRepo.findById(id).orElse(null);
 
-        if (todo == null){
+        if (todo == null) {
             throw new EntityNotFoundException("Task not found");
         }
 
-        if (todo.getStatus().equals(TaskStatus.CREATED) || todo.getStatus().equals(TaskStatus.DONE)){
+        if (todo.getStatus().equals(TaskStatus.CREATED) || todo.getStatus().equals(TaskStatus.DONE)) {
             throw new IllegalArgumentException("Task status should be in process");
         }
 
