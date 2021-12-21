@@ -39,9 +39,9 @@ public class JwtTokenFilter extends GenericFilterBean {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
             String username = jwtProvider.getLoginFromToken(token);
-            CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
+            JwtUser jwtUser = (JwtUser) customUserDetailsService.loadUserByUsername(username);
             //Я создаю объект UsernamePasswordAuthenticationToken из библиотеки спринг секюрити и после передаю этот объект в SecurityContextHolder.
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(servletRequest, servletResponse);

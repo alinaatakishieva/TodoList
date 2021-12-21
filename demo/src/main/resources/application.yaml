@@ -32,11 +32,18 @@ spring:
     servlet:
       multipart:
         enabled: true
+        max-file-size: 200
+        max-request-size: 215
+        file-size-threshold: 2
 
-  file:
-    upload.dir: C:\\Users\Alina\uploads
-    max-file-size: 200
-    max-request-size: 215
-    size-threshold: 2
+#  file:
+#    upload-dir: C:\\Users\Alina\uploads
+
+    app:
+      ## File Storage Properties
+      storage:
+        location: C:\\Users\Alina\uploads
+
+
 
 

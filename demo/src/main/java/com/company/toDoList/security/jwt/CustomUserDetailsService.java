@@ -20,20 +20,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return Optional.ofNullable(userService.findByUsername(username))
-//                .map(JwtUser::)
-//                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-//    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return Optional.ofNullable(userService.findByUsername(username))
-                .map(CustomUserDetails::fromUserEntityToCustomUserDetails)
+                .map(JwtUser::fromUserEntityToJwtUser)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
-
-
-
 }

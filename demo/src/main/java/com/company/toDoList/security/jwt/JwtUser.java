@@ -1,34 +1,35 @@
 package com.company.toDoList.security.jwt;
 
+import com.company.toDoList.entities.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-
+import java.util.Collections;
+@NoArgsConstructor
+@AllArgsConstructor
 public class JwtUser implements UserDetails {
 
-    private final Long id;
-    private final String username;
-    private final String firstname;
-    private final String lastname;
-    private final String password;
-    private final boolean enabled;
-    private final Collection<? extends GrantedAuthority> authorities; //what does it mean?
+    private  Long id;
+    private String username;
+    private String firstname;
+    private String lastname;
+    private String password;
+    private boolean enabled;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUser(Long id, String username, String firstname, String lastname, String password, boolean enabled,  Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.password = password;
-        this.enabled = enabled;
-    //    this.lastPasswordResetDate = lastPasswordResetDate;
-        this.authorities = authorities;
+    public static JwtUser fromUserEntityToJwtUser(UserEntity userEntity){
+        JwtUser user = new JwtUser();
+        user.username = userEntity.getUsername();
+        user.password = userEntity.getPassword();
+        user.authorities = Collections.singletonList(new SimpleGrantedAuthority(userEntity.getRoles().toString()));
+        return user;
     }
-
-    @JsonIgnore
-    public Long getId(){return id;}
 
     @Override
     //Granted authority is for permissions
@@ -42,9 +43,13 @@ public class JwtUser implements UserDetails {
         return password;
     }
 
-    public String getFirstname(){return firstname;}
+    public String getFirstname() {
+        return firstname;
+    }
 
-    public String getLastname(){return lastname;}
+    public String getLastname() {
+        return lastname;
+    }
 
     @Override
     public String getUsername() {
@@ -74,6 +79,4 @@ public class JwtUser implements UserDetails {
         return enabled;
     }
 
-  //  @JsonIgnore
-  //  public Date getUpdated(){return lastPasswordResetDate;}
 }

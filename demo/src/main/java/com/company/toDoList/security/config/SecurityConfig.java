@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userRepo = userRepo;
     }
 
-    @Override
+        @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(username -> (UserDetails) userRepo
                 .findByUsername(username))
