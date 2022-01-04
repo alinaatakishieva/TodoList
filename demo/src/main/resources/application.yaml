@@ -36,13 +36,13 @@ spring:
         max-request-size: 215
         file-size-threshold: 2
 
-#  file:
-#    upload-dir: C:\\Users\Alina\uploads
+  file:
+    upload-dir: C:\\Users\Alina\uploads
 
-    app:
-      ## File Storage Properties
-      storage:
-        location: C:\\Users\Alina\uploads
+#    app:
+#      ## File Storage Properties
+#      storage:
+#        location: C:\\Users\Alina\uploads
 
 
 
